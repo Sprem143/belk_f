@@ -30,7 +30,7 @@ function App() {
 
   const getlinks = async () => {
     try {
-      let result = await fetch('http://localhost:10001/links', {
+      let result = await fetch('https://belk-backend-wurg.onrender.com/links', {
         method: "GET",
         headers: { 'Content-Type': 'application/json' }
       })
@@ -45,7 +45,7 @@ function App() {
   // ---search product detail from given url
   const getPrice = async () => {
     try {
-      let result = await fetch('http://localhost:10001/price', {
+      let result = await fetch('https://belk-backend-wurg.onrender.com/price', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: url })
@@ -61,7 +61,7 @@ function App() {
 
   const checkurl = async (url, index) => {
     try {
-      let result = await axios.post('http://localhost:10001/checkurl',
+      let result = await axios.post('https://belk-backend-wurg.onrender.com/checkurl',
         { url: url }, {
         headers: { 'Content-Type': 'application/json' }
       });
@@ -87,7 +87,7 @@ function App() {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('http://localhost:10001/upload', formData, {
+      const response = await axios.post('https://belk-backend-wurg.onrender.com/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -101,7 +101,7 @@ function App() {
   const autofetchData = async (link) => {
     try {
       console.log(link)
-      let result = await fetch('http://localhost:10001/autofetchdata', {
+      let result = await fetch('https://belk-backend-wurg.onrender.com/autofetchdata', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ link: link })
@@ -117,7 +117,7 @@ function App() {
 
 const getnumberofupdatedpr=async()=>{
   try{
-    let result = await fetch('http://localhost:10001/noofupdatedpr', {
+    let result = await fetch('https://belk-backend-wurg.onrender.com/noofupdatedpr', {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     })
@@ -153,7 +153,7 @@ const getnumberofupdatedpr=async()=>{
 
   const getlatestdata = async () => {
     try {
-      let result = await fetch('http://localhost:10001/getlatestdata', {
+      let result = await fetch('https://belk-backend-wurg.onrender.com/getlatestdata', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -168,7 +168,7 @@ const getnumberofupdatedpr=async()=>{
   const downloadExcel = async () => {
     try {
       const response = await axios({
-        url: 'http://localhost:10001/download-excel', // Replace with your backend URL
+        url: 'https://belk-backend-wurg.onrender.com/download-excel', // Replace with your backend URL
         method: 'GET',
         responseType: 'blob', // Important to get the response as a blob (binary data)
       });
