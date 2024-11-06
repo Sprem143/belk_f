@@ -92,6 +92,7 @@ function App() {
         }
       });
       alert(response.data.msg);
+      console.log(response.data.msg)
     } catch (error) {
       console.error('Error uploading file:', error);
       alert('Failed to upload file');
