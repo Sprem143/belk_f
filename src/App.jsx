@@ -30,11 +30,13 @@ function App() {
 
   const getlinks = async () => {
     try {
+      console.log("get links called")
       let result = await fetch('https://belk-backend-1.onrender.com/links', {
         method: "GET",
         headers: { 'Content-Type': 'application/json' }
       })
       result = await result.json();
+      console.log(result);
       setLinks(result.links[0].url);
       setNoOfTotalPr(result.notp)
     } catch (err) {
@@ -86,28 +88,17 @@ function App() {
     formData.append('file', file);
 
     try {
-      // const response = await axios.post('https://belk-backend-1.onrender.com/upload', formData, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data'
-      //   }
-      // });
-      // alert(response.data.msg);
-      // console.log(response.data.msg)
-      const result = await fetch('https://belk-backend-1.onrender.com/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          method: "POST",
-          body: formData,
-        });
-   result= await result.json();
-   console.log(result.msg)
+      const response = await axios.post('https://belk-backend-1.onrender.com/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      alert(response.data.msg);
     } catch (error) {
       console.error('Error uploading file:', error);
       alert('Failed to upload file');
     }
   };
-
 
   const autofetchData = async (link) => {
     try {
@@ -119,10 +110,11 @@ function App() {
       })
       result = await result.json();
       if (result) {
+        console.log(result);
         return true
       }
     } catch (err) {
-      console.log("error while auto faeching for links")
+      console.log(err)
     }
   }
 
@@ -142,24 +134,24 @@ function App() {
   const autofetch = async () => {
     console.log("autofetch");
     let index = 0;
-    // const result = await autofetchData(links[30]);
-    const intervalId = setInterval(async () => {
-      if (index < links.length) {
-        try {
-          const result = await autofetchData(links[index]); // Wait for autofetchData to complete
-          console.log("Index:", index);
-          console.log(result);
-          if (result === true) {
-            index++ ; 
-            getnumberofupdatedpr()
-          }
-        } catch (err) {
-          console.log("Error during autofetch:", err);
-        }
-      } else {
-        clearInterval(intervalId); // Stop the interval when all links have been processed
-      }
-    }, 110000); 
+    const result = await autofetchData(links[0]);
+    // const intervalId = setInterval(async () => {
+      // if (index < links.length) {
+        // try {
+        //   const result = await autofetchData(links[index]); // Wait for autofetchData to complete
+        //   console.log("Index:", index);
+        //   console.log(result);
+        //   if (result === true) {
+        //     index++ ; 
+        //     getnumberofupdatedpr()
+        //   }
+        // } catch(err) {
+        //   console.log(err);
+        // }
+      // } else {
+      //   clearInterval(intervalId); // Stop the interval when all links have been processed
+      // }
+    // }, 110000); 
   };
 
   const getlatestdata = async () => {
