@@ -20,9 +20,9 @@ function App() {
   const [url, setUrl] = useState([]);
   const [product, setProduct] = useState([]);
   const [links, setLinks] = useState([]);
-  const [noOfUpdatedPr, setNoOfUpdatedPr]= useState(0);
-  const [noOfTotalPr,setNoOfTotalPr]=useState(0);
-  const [result,setResult]= useState()
+  const [noOfUpdatedPr, setNoOfUpdatedPr] = useState(0);
+  const [noOfTotalPr, setNoOfTotalPr] = useState(0);
+  const [result, setResult] = useState()
 
   useEffect(() => {
     getlinks();
@@ -30,7 +30,7 @@ function App() {
 
   const getlinks = async () => {
     try {
-      let result = await fetch('https://belk-backend-wurg.onrender.com/links', {
+      let result = await fetch('https://belk-backend-1.onrender.com/links', {
         method: "GET",
         headers: { 'Content-Type': 'application/json' }
       })
@@ -45,15 +45,14 @@ function App() {
   // ---search product detail from given url
   const getPrice = async () => {
     try {
-      let result = await fetch('https://belk-backend-wurg.onrender.com/price', {
+      let result = await fetch('https://belk-backend-1.onrender.com/price', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: url })
       });
       result = await result.json();
-      // setUrldetail(result); // Add result as a new array within urldetail
-      // setResult(result)
-      console.log(result);
+      setUrldetail(result); // Add result as a new array within urldetail
+      setShow(true)
     } catch (err) {
       console.log(err);
     }
@@ -61,7 +60,7 @@ function App() {
 
   const checkurl = async (url, index) => {
     try {
-      let result = await axios.post('https://belk-backend-wurg.onrender.com/checkurl',
+      let result = await axios.post('https://belk-backend-1.onrender.com/checkurl',
         { url: url }, {
         headers: { 'Content-Type': 'application/json' }
       });
@@ -87,7 +86,7 @@ function App() {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('https://belk-backend-wurg.onrender.com/upload', formData, {
+      const response = await axios.post('https://belk-backend-1.onrender.com/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -101,7 +100,7 @@ function App() {
   const autofetchData = async (link) => {
     try {
       console.log(link)
-      let result = await fetch('https://belk-backend-wurg.onrender.com/autofetchdata', {
+      let result = await fetch('https://belk-backend-1.onrender.com/autofetchdata', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ link: link })
@@ -115,45 +114,45 @@ function App() {
     }
   }
 
-const getnumberofupdatedpr=async()=>{
-  try{
-    let result = await fetch('https://belk-backend-wurg.onrender.com/noofupdatedpr', {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    })
-    result=await result.json();
-    setNoOfUpdatedPr(result.noup);
-  }catch(err){
-    console.log(err)
+  const getnumberofupdatedpr = async () => {
+    try {
+      let result = await fetch('https://belk-backend-1.onrender.com/noofupdatedpr', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      result = await result.json();
+      setNoOfUpdatedPr(result.noup);
+    } catch (err) {
+      console.log(err)
+    }
   }
-}
 
   const autofetch = async () => {
     console.log("autofetch");
     let index = 0;
+    // const result = await autofetchData(links[30]);
     const intervalId = setInterval(async () => {
       if (index < links.length) {
         try {
           const result = await autofetchData(links[index]); // Wait for autofetchData to complete
           console.log("Index:", index);
-          console.log("Return result:", result);
+          console.log(result);
           if (result === true) {
-            index++; // Increase index only if the fetch was successful
+            index++ ; 
             getnumberofupdatedpr()
           }
-          // If result is false or undefined, index will remain the same and the function will retry
         } catch (err) {
           console.log("Error during autofetch:", err);
         }
       } else {
         clearInterval(intervalId); // Stop the interval when all links have been processed
       }
-    }, 120000); // 1-minute interval
+    }, 110000); 
   };
 
   const getlatestdata = async () => {
     try {
-      let result = await fetch('https://belk-backend-wurg.onrender.com/getlatestdata', {
+      let result = await fetch('https://belk-backend-1.onrender.com/getlatestdata', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -168,7 +167,7 @@ const getnumberofupdatedpr=async()=>{
   const downloadExcel = async () => {
     try {
       const response = await axios({
-        url: 'https://belk-backend-wurg.onrender.com/download-excel', // Replace with your backend URL
+        url: 'https://belk-backend-1.onrender.com/download-excel', // Replace with your backend URL
         method: 'GET',
         responseType: 'blob', // Important to get the response as a blob (binary data)
       });
@@ -267,79 +266,10 @@ const getnumberofupdatedpr=async()=>{
         )}
       </div>
 
-      <div>
-        <ol>
-          {links.map((link, index) => (
-            <li key={index} className='mb-1'>
-              {link}
-              <Button id={index} className='ms-2' variant="primary" onClick={() => checkurl(link, index)}>
-                Check
-              </Button>
-            </li>
-          ))}
-
-
-
-        </ol>
-      </div>
-{/* -------link wise result-------- */}
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Latest Product Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {urldetail.length > 0 && urldetail.slice(1).map((detailArray, i) => (
-            <Table key={i} striped bordered hover>
-              <thead>
-                <tr>
-                  <th colSpan={2}>{i}</th>
-                  <th colSpan={3}>{detailArray.url}</th>
-                </tr>
-                <tr>
-                  <th>Image</th>
-                  <th>UPC</th>
-                  <th>New Price</th>
-                  <th>Old Price</th>
-                  <th>Quantity</th>
-                  <th>Available</th>
-                  <th>Product URL</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Array.isArray(detailArray) && detailArray.map((detail, index) => (
-
-                  <tr key={index}>
-                    <td>
-                      <img src={detail.imgurl} alt="" height='30px' />
-                    </td>
-                    <td>{detail.upc}</td>
-                    <td>{detail.newPrice}</td>
-                    <td style={{ color: Number(detail.oldPrice) !== Number(detail.newPrice) ? 'red' : 'black' }}>
-                      {detail.oldPrice}
-                    </td>
-                    <td style={{ color: detail.quantity < 10 ? 'red' : 'black' }}>
-                      {detail.quantity}
-                    </td>
-                    <td>{detail.available}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          ))}
-
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-
       {/* ------all result------ */}
       <Modal show={show1} onHide={handleClose1}>
         <Modal.Header closeButton className='d-flex justify-content-center'>
-          <Modal.Title className='me-4 pe-4' style={{borderRight:'3px solid black'}}>Latest Product Details</Modal.Title>
+          <Modal.Title className='me-4 pe-4' style={{ borderRight: '3px solid black' }}>Latest Product Details</Modal.Title>
           <Modal.Title>Total Product : {urldetail.length}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -347,10 +277,14 @@ const getnumberofupdatedpr=async()=>{
           <Table striped bordered hover>
             <thead>
               <tr>
+
+                <th>No</th>
                 <th>Image</th>
                 <th>UPC</th>
                 <th>New Price</th>
+                <th>Offer Price</th>
                 <th>Old Price</th>
+                <th>Color & Size</th>
                 <th>Quantity</th>
                 <th>Available</th>
                 <th>Product URL</th>
@@ -362,15 +296,21 @@ const getnumberofupdatedpr=async()=>{
 
                 <tr key={i}>
                   <td style={{ padding: '0 !important' }}>
+                    {i + 1}
+                  </td>
+                  <td style={{ padding: '0 !important' }}>
                     <img src={detailArray.imgurl} alt="" height='40px' />
                   </td>
                   <td>{detailArray.upc}</td>
                   <td>{detailArray.newPrice}</td>
+                  {detailArray.onsale==='false'?<td style={{ color: "#0b6bff", fontWeight: 'bold' }}>{detailArray.newPrice  && (detailArray.newPrice - (detailArray.newPrice * Number(detailArray.offer) / 100)).toFixed(2)} <br /> <span style={{color:'black', fontWeight:'initial'}}>{detailArray.offerend}</span></td>
+                : <td>NA</td> }
                   <td style={{ color: Number(detailArray.oldPrice) !== Number(detailArray.newPrice) ? 'red' : 'black' }}>
-                    {detailArray.oldPrice}
+                    {detailArray.oldPrice && detailArray.oldPrice.toFixed(2)}
                   </td>
-                  <td style={{ color: detailArray.quantity < 10 && detailArray.available=='T' ? 'red' : 'black' }}>
-                    {detailArray.quantity}
+                  <td>{detailArray.clrsize}</td>
+                  <td style={{ color: (detailArray.quantity < 8 && detailArray.available === 'T') || (detailArray.quantity > 8 && detailArray.available === 'F') ? 'red' : 'black' }}>
+                  {detailArray.quantity}
                   </td>
                   <td>{detailArray.available}</td>
                   <td> <a href={detailArray.url} target='_blank'>{detailArray.url}</a> </td>
@@ -388,10 +328,6 @@ const getnumberofupdatedpr=async()=>{
         </Modal.Footer>
       </Modal>
 
-
-
-
-
       <Button variant="secondary" className='me-4' onClick={autofetch}>
         Start Auto Fetch
       </Button>
@@ -402,9 +338,87 @@ const getnumberofupdatedpr=async()=>{
       <Button variant="secondary" onClick={downloadExcel}>
         Download Excel file
       </Button>
-  <h4>{noOfUpdatedPr}</h4>
-  <h4>{noOfTotalPr}</h4>
-<p>{result}</p>
+      <h4>{noOfUpdatedPr}</h4>
+      <h4>{noOfTotalPr}</h4>
+      <p>{result}</p>
+
+
+      <div>
+        <ol>
+          {links.map((link, index) => (
+            <li key={index} className='mb-1'>
+              {link}
+              <Button id={index} className='ms-2' variant="primary" onClick={() => checkurl(link, index)}>
+                Check
+              </Button>
+            </li>
+          ))}
+
+
+
+        </ol>
+      </div>
+      {/* -------link wise result-------- */}
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Latest Product Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+
+                <th>Number</th>
+                <th>UPC</th>
+                <th>Old Price</th>
+
+                <th>New Price</th>
+
+                <th>Offer</th>
+                <th>Offer Prise</th>
+              </tr>
+            </thead>
+            {urldetail.length > 0 && urldetail.map((detailArray, i) => (
+
+              <tbody>
+
+                <tr key={i}>
+                  <td style={{ padding: '0 !important' }}>
+                    {i + 1}
+                  </td>
+                  {/* <td style={{ padding: '0 !important' }}>
+                    <img src={detailArray.imgurl} alt="" height='40px' />
+                  </td> */}
+                  <td>{detailArray.upc}</td>
+                  <td>{detailArray.oldPrice}</td>
+                  <td style={{ color: Number(detailArray.oldPrice) !== Number(detailArray.newPrice) ? 'red' : 'black' }}>
+                    {detailArray.newPrice}
+                  </td>
+                  {/* <td>{detailArray.clrsize}</td>
+                  <td style={{ color: detailArray.quantity < 10 && detailArray.available=='T' ? 'red' : 'black' }}>
+                    {detailArray.quantity}
+                  </td>
+                  <td>{detailArray.available}</td> */}
+                  <td>{detailArray.offer}</td>
+                  <td>{detailArray.newPrice - (detailArray.newPrice * Number(detailArray.offer) / 100)}</td>
+
+                  {/* <td> <a href={detailArray.url} target='_blank'>{detailArray.url}</a> </td> */}
+                </tr>
+
+              </tbody>
+
+            ))}
+          </Table>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+
+
     </>
   );
 }
