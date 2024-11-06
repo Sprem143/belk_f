@@ -86,18 +86,29 @@ function App() {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('https://belk-backend-1.onrender.com/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      alert(response.data.msg);
-      console.log(response.data.msg)
+      // const response = await axios.post('https://belk-backend-1.onrender.com/upload', formData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data'
+      //   }
+      // });
+      // alert(response.data.msg);
+      // console.log(response.data.msg)
+      const result = await fetch('https://belk-backend-1.onrender.com/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          method: "POST",
+          body: formData,
+        });
+   result= await result.json();
+   console.log(result.msg)
     } catch (error) {
       console.error('Error uploading file:', error);
       alert('Failed to upload file');
     }
   };
+
+
   const autofetchData = async (link) => {
     try {
       console.log(link)
